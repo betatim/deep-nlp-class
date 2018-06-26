@@ -35,6 +35,253 @@ Visit [http://www.wildtreetech.com](www.wildtreetech.com).
 
 ---
 
+# Whirlwind tour
+
+---
+
+# Natural Language Processing
+
+.center[
+<img src="images/nlp.png" style="width: 550px;" />
+]
+
+---
+# Natural Language Processing
+
+- Sentence/Document level Classification (topic, sentiment, language, ...)
+- Topic modeling (LDA, ...)
+- Translation
+- Chatbots / dialogue systems / assistants (Alexa, ...)
+- Summarization
+
+---
+
+# How to represent text for machines?
+
+Words are indexed and represented as 1-hot vectors.
+
+Large Vocabulary of possible words $|V|$.
+
+Use of **Embeddings** as inputs in all Deep NLP tasks.
+
+Word embeddings usually have dimensions 50, 100, 200, 300.
+
+---
+
+# Supervised Text Classification
+
+.center[
+<img src="images/fasttext.svg" style="width: 500px;" />
+]
+
+.footnote.small[
+Joulin, Armand, et al. "Bag of tricks for efficient text classification." FAIR 2016
+]
+
+--
+
+$\mathbf{E}$ embedding (linear projection), shape: .red[`|V| x H`]
+
+--
+
+Embeddings are average,d hidden activation siz: .red[`H`]
+
+--
+
+Dense output connection $\mathbf{W}, \mathbf{b}$, shape: .red[`H x K`]
+
+--
+
+Softmax and **cross-entropy** loss.
+
+---
+
+# Supervised Text Classification
+
+.center[
+<img src="images/fasttext.svg" style="width: 500px;" />
+]
+
+.footnote.small[
+Joulin, Armand, et al. "Bag of tricks for efficient text classification." FAIR 2016
+]
+
+<br/>
+
+- Very efficient (**speed** and **accuracy**) on large datasets
+- State-of-the-art (or close to) on several classification tasks, when adding **bigrams/trigrams**
+- Don't gain much from depth
+
+---
+
+# Transfer learning wins!
+
+As for images: can we have word representations that are generic enough to transfer from one task to another?
+
+Want to take advantage of the nearly infinite supply of text on the internet.
+
+The answer is: yes!
+
+---
+
+# Word2Vec
+
+Similar vectors:
+.center[
+<img src="images/most_sim.png" style="width: 500px;" />
+]
+
+Can perform arithmetic on these vectors:
+.center[
+<img src="images/sum_wv.png" style="width: 700px;" />
+]
+
+.footnote.small[
+Colobert et al. 2011, Mikolov, et al. 2013
+]
+
+---
+
+# Neural networks
+
+Linear algebra arranged as a DAG.
+
+.width-100.center[![](images/two-layer.png)]
+
+$$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
+
+.footnote[From https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/]
+
+---
+
+# In General: A Directed Acyclical Graph
+
+.width-80.center[![](images/nn-as-dag.png)]
+
+.footnote[From https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/]
+
+---
+
+# Language Models
+
+Assign a probability to a sequence of words, such that plausible sequences have
+higher probabilities e.g:
+
+- $p(\text{"I like dogs"}) > p(\text{"I swim dogs"})$
+- $p(\text{"I like dogs"}) > p(\text{"like I dogs"})$
+
+Auto-regressive sequence modelling
+
+$p\_{\theta}(w\_{0})$
+
+$p_{\theta}$ is parametrized by a neural network.
+
+---
+
+# Language Models
+
+Assign a probability to a sequence of words, such that plausible sequences have
+higher probabilities e.g:
+
+- $p(\text{"I like dogs"}) > p(\text{"I swim dogs"})$
+- $p(\text{"I like dogs"}) > p(\text{"like I dogs"})$
+
+Auto-regressive sequence modelling
+
+$p\_{\theta}(w\_{0}) \cdot p\_{\theta}(w\_{1} | w\_{0})$
+
+$p_{\theta}$ is parametrized by a neural network.
+
+---
+
+# Language Models
+
+Assign a probability to a sequence of words, such that plausible sequences have
+higher probabilities e.g:
+
+- $p(\text{"I like dogs"}) > p(\text{"I swim dogs"})$
+- $p(\text{"I like dogs"}) > p(\text{"like I dogs"})$
+
+Auto-regressive sequence modelling
+
+$p\_{\theta}(w\_{0}) \cdot p\_{\theta}(w\_{1} | w\_{0}) \cdot \ldots \cdot p\_{\theta}(w\_n | w\_{n-1}, w\_{n-2}, \ldots, w\_0)$
+
+$p_{\theta}$ is parametrized by a neural network.
+
+The motivation is that an internal representation of the model is better at
+capturing the meaning of a sequence than a simple Bag-of-Words.
+---
+
+# Conditional Language Models
+
+Translation can be expressed as Conditional Language Model:
+
+- $p(Target | Source)$
+- *Source*: "Ich finde Katzen toll."
+- *Target*: "I like cats."
+
+Model the output word by word:
+
+$p\_{\theta}(w\_{0} | Source) \cdot p\_{\theta}(w\_{1} | w\_{0}, Source) \cdot \ldots $
+
+---
+
+# Simple language model
+
+.center[
+<img src="images/fixedsize_mlp.svg" style="width: 400px;" />
+]
+
+Fixed context size:
+
+- Average embeddings: (same as Continous BoW) no sequence information
+- Concatenate embeddings: introduces many parameters
+- 1D convolution: larger contexts and limit number of parameters
+- Still does not take into account varying sequence sizes and sequence dependencies
+
+---
+
+# Recurrent Neural Network
+
+.center[
+<img src="images/rnn_simple.svg" style="width: 200px;" />
+]
+
+--
+
+Unroll over a sequence $(x_0, x_1, x_2)$:
+
+.center[
+<img src="images/unrolled_rnn.svg" style="width: 400px;" />
+]
+
+???
+
+Accumulate knowledge from a sequence into a fixed size representation.
+
+---
+
+# RNN Language Modelling
+
+.center[
+<img src="images/unrolled_rnn_words.svg" style="width: 450px;" />
+]
+
+input $(w\_0, w\_1, ..., w\_t)$ .small[ sequence of (encoded) words ] <br/>
+output $(w\_1, w\_2, ..., w\_{t+1})$ .small[shifted sequence of (encoded) words ]
+
+---
+
+# Neural networks are feature transformers
+
+Keep transforming your data until it is linearly separable.
+
+[Solve circle-in-circle problem](http://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=10&networkShape=3&seed=0.44312&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)
+
+.width-100.center[![](images/tf-playground-circle-in-circle.png)]
+
+---
+
 # Goals
 
 * You will know how to construct a simple neural network with one hidden
@@ -76,6 +323,7 @@ Approximate schedule: work, coffee, work, lunch, work, work, coffee, work.
 
 * You have to start small.
 * You can only learn by doing.
+* Limited by your thinking, not typing speed.
 * Try to predict what will happen, then try them out and compare.
 
 ---
@@ -521,7 +769,7 @@ class: middle, center
 
 * 9.00 - 9.30 Plan for the day
 * 9.30 - 10.30 TfIdf as basic word vectors
-* 10.40 - 12.10 word2vec and doc2vec
+* 10.40 - 12.10 word2vec in depth
 * lunch
 * 13.10 - 14.40 Linear models + pretrained embeddings
 * 14.40 - 15.40 Dealing with sequences: LSTM, GRU and Conv1D
@@ -630,3 +878,266 @@ Explore "vectorisation" and create a baseline model to compare to.
 * implementing old-school algorithms is simple with scikit-learn.
 * keep yourself honest by creating a (strong) baseline.
 * Logistic regression on "word vectors" is hard to beat.
+
+---
+
+# Beyond Bags of Words
+
+Limitations of bag of words:
+- Semantics of words not captured
+  - distance between `movie` and `film` and `dog` is the same
+- Synonymous words not represented
+- Very distributed representation of documents
+
+--
+
+- Learn to embed words in a "general" vector space.
+
+---
+
+# Word2Vec
+
+Similar vectors:
+.center[
+<img src="images/most_sim.png" style="width: 500px;" />
+]
+
+Can perform arithmetic on these vectors:
+.center[
+<img src="images/sum_wv.png" style="width: 700px;" />
+]
+
+.footnote.small[
+Colobert et al. 2011, Mikolov, et al. 2013
+]
+
+---
+
+# Similar words are close together
+
+.center[
+<img src="images/tsne-glove.png" style="width: 500px;" />
+]
+
+---
+
+# The Idea
+
+- Unsupervised extraction of semantics using large
+corpus (wikipedia etc)
+- Input: one-hot representation of word (as in BoW).
+- Use auxiliary task to learn continuous
+representation.
+
+---
+
+# Word2Vec: CBoW
+
+CBoW: representing the context as Continuous Bag-of-Word.
+
+Self-supervision from large unlabeled corpus of text: slide a window over an anchor word and its context:
+
+.center[
+<img src="images/word2vec_words.svg" style="width: 500px;" />
+]
+
+Plus some computational tricks like "negative mining": http://ruder.io/word-embeddings-softmax/index.html
+
+.footnote.small[
+Mikolov, Tomas, et al. "Distributed representations of words and phrases and their compositionality." NIPS 2013
+]
+
+???
+
+Softmax is too computationally intensive to be practical: the
+normalization term involves a sum over the full vocabulary of
+cardinality |V| >> 10000 at each gradient step.
+
+Negative Sampling uses k=5 negative words sampled at random instead.
+This is not accurate enough to estimate
+`p(x_t|x_{t-2}, x_{t-1}, x_{t+1}, x_t{t+2})`
+accuractely but it's a good enough approximation to train a
+useful word embedding parameters.
+
+---
+
+# Word2Vec: Skip Gram
+<br/>
+
+.center[
+<img src="images/word2vec_skipgram.svg" style="width: 500px;" />
+]
+
+<br/>
+
+- Given the central word, predict occurence of other words in its context.
+- Widely used in practice
+- Negative Sampling is used as a cheaper alternative to full softmax.
+
+---
+
+# In practice
+
+Many available implementations:
+* spacy
+* Gensim
+* Word2vec
+* Tensorflow
+* fastText
+* startspace
+* (mostly) Don't train yourself!
+
+---
+
+# Use pretrained vectors
+
+Input to any deep or shallow learning algorithm based on text should be
+appropriate pre-trained vectors. You can get them from places like:
+
+* Glove: https://nlp.stanford.edu/projects/glove/
+* FastText: 157 languages! https://fasttext.cc/docs/en/crawl-vectors.html
+* word2vec: https://code.google.com/archive/p/word2vec/
+
+---
+
+# Word vectors outro
+
+You can find a fairly low dimensional (compared to BoW) vector space into which
+words can be embedded. The structure of the space represents "semantic similarity"
+between words.
+
+Input to any deep or shallow learning algorithm based on text should be
+appropriate pre-trained vectors.
+
+You rarely need to train these yourself.
+
+(but if you want to train them yourself you can with `gensim`)
+
+---
+
+class: middle,center
+# Lunch 🍲😋
+
+---
+
+# Using word vectors
+
+Next we will look at how you can construct good models with little computing
+power.
+
+We will train our own embedding vectors, use pre-trained ones, and
+see that all this also works in German.
+
+---
+
+# How to deal with sequential nature of text?
+
+We average (or max, or mean, or ...) the individual word vectors.
+
+You can also try concatenating the mean and the max vector and see
+if this increases the performance.
+
+---
+
+# Other questions to investigate
+
+Artificially shrink your dataset:
+* how does performance change?
+* can you see benefits from using pretrained vectors more or less at small sizes?
+* what is the minimum dataset you need to get "reasonable" performance?
+* what kind of reviews are misclassified?
+* if you swap out common words for their synonym what happens to performance?
+  - what happens to the BoW baseline model's performance?
+
+---
+
+# Recurrent Neural Networks
+
+Finally, a tool that can deal with sequences!
+
+Sequence classification:
+* sentiment analysis,
+* activity recognition (GitBit),
+* DNA sequence classification
+
+Sequence synthesis:
+* text generation,
+* music generation
+
+Sequence-to-sequence translation:
+* speech recognition,
+* text translation,
+* part-of-speech tagging
+
+---
+
+# A Recurrent Neural Network
+
+.center[
+<img src="images/rnn_simple.svg" style="width: 200px;" />
+]
+
+Unroll over a sequence $(x_0, x_1, x_2)$:
+
+.center[
+<img src="images/unrolled_rnn.svg" style="width: 400px;" />
+]
+
+Accumulate knowledge from a sequence into a fixed size representation.
+
+---
+
+# A Recurrent Neural Network
+
+A recurrent model $\Phi$ maintains a recurrent state that is updated at each time
+step. Given a sequence $x$ and an initial recurrent state $h_0$ the model
+computes a sequence of recurrent states:
+
+$$
+h\_t = \Phi(x\_t, h\_{t-1}), \mathsf{with\ } t = 1, 2, 3, ...
+$$
+
+We can project the recurrent state into a prediction at any time:
+$$
+y_t = \Psi(h_t)
+$$
+
+---
+
+# The same in code
+
+```
+timesteps = 50
+input_features = 32
+output_features = 64
+
+# random inputs
+inputs = np.random.random((timesteps, input_features))
+# initial state
+state_t = np.zeros((output_features, ))
+
+W = np.random.random((output_features, input_features))
+U = np.random.random((output_features, input_features))
+b = np.random.random((output_features, ))
+
+successive_outputs = []
+
+for input_t in inputs:
+    output_t = np.tanh(np.dot(W, input_t) + np.dot(U, state_t) + b)
+    successive_outputs.append(output_t)
+    state_t = output_t
+
+# 2D tensor of shape (timesteps, output_features)
+final_output = np.concatenate(successive_outputs, axis=0)
+```
+
+---
+
+# Colah's explanations are great
+
+Will use the pictures from the following article to explain things,
+you should find a moment to read the article as it is great.
+
+http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+
+---
