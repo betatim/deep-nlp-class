@@ -15,6 +15,8 @@ at Fermilab, then research fellow at CERN, then EPFL.
 Got interested in machine-learning because I thought it would be an easy way
 to get some impressive results ...
 
+Who are you and how did you get interested?
+
 ---
 
 # Wild Tree Tech
@@ -34,8 +36,9 @@ from startups to UN organisations.
 Visit [http://www.wildtreetech.com](www.wildtreetech.com).
 
 ---
+class: middle, center
 
-# Whirlwind tour
+# A Whirlwind Tour
 
 ---
 
@@ -46,13 +49,13 @@ Visit [http://www.wildtreetech.com](www.wildtreetech.com).
 ]
 
 ---
-# Natural Language Processing
+# Natural Language Processing is used for:
 
 - Sentence/Document level Classification (topic, sentiment, language, ...)
 - Topic modeling (LDA, ...)
 - Translation
 - Chatbots / dialogue systems / assistants (Alexa, ...)
-- Summarization
+- Summarisation
 
 ---
 
@@ -62,7 +65,7 @@ Words are indexed and represented as 1-hot vectors.
 
 Large Vocabulary of possible words $|V|$.
 
-Use of **Embeddings** as inputs in all Deep NLP tasks.
+Then convert to `Embeddings` as inputs in all Deep NLP tasks.
 
 Word embeddings usually have dimensions 50, 100, 200, 300.
 
@@ -84,7 +87,7 @@ $\mathbf{E}$ embedding (linear projection), shape: .red[`|V| x H`]
 
 --
 
-Embeddings are average,d hidden activation siz: .red[`H`]
+Embeddings are averaged, hidden activation siz: .red[`H`]
 
 --
 
@@ -92,7 +95,7 @@ Dense output connection $\mathbf{W}, \mathbf{b}$, shape: .red[`H x K`]
 
 --
 
-Softmax and **cross-entropy** loss.
+Softmax and cross-entropy loss over $K$ classes.
 
 ---
 
@@ -116,7 +119,8 @@ Joulin, Armand, et al. "Bag of tricks for efficient text classification." FAIR 2
 
 # Transfer learning wins!
 
-As for images: can we have word representations that are generic enough to transfer from one task to another?
+Ask the same question as for images: can we have word representations (embeddings) that
+are generic enough to transfer from one task to another?
 
 Want to take advantage of the nearly infinite supply of text on the internet.
 
@@ -150,6 +154,8 @@ Linear algebra arranged as a DAG.
 
 $$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
 
+A neural network for classification with one fully connected hidden layer.
+
 .footnote[From https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/]
 
 ---
@@ -158,6 +164,8 @@ $$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
 
 .width-80.center[![](images/nn-as-dag.png)]
 
+Lots of freedom for how you connect all the building blocks/operations.
+
 .footnote[From https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/]
 
 ---
@@ -165,12 +173,12 @@ $$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
 # Language Models
 
 Assign a probability to a sequence of words, such that plausible sequences have
-higher probabilities e.g:
+higher probabilities. For example:
 
 - $p(\text{"I like dogs"}) > p(\text{"I swim dogs"})$
 - $p(\text{"I like dogs"}) > p(\text{"like I dogs"})$
 
-Auto-regressive sequence modelling
+Auto-regressive sequence modelling:
 
 $p\_{\theta}(w\_{0})$
 
@@ -209,7 +217,7 @@ $p\_{\theta}(w\_{0}) \cdot p\_{\theta}(w\_{1} | w\_{0}) \cdot \ldots \cdot p\_{\
 $p_{\theta}$ is parametrized by a neural network.
 
 The motivation is that an internal representation of the model is better at
-capturing the meaning of a sequence than a simple Bag-of-Words.
+capturing the meaning of a sequence than a simple Bag-of-Words (unordered set).
 ---
 
 # Conditional Language Models
@@ -224,6 +232,8 @@ Model the output word by word:
 
 $p\_{\theta}(w\_{0} | Source) \cdot p\_{\theta}(w\_{1} | w\_{0}, Source) \cdot \ldots $
 
+How do we get a good representation of the data?
+
 ---
 
 # Simple language model
@@ -232,7 +242,8 @@ $p\_{\theta}(w\_{0} | Source) \cdot p\_{\theta}(w\_{1} | w\_{0}, Source) \cdot \
 <img src="images/fixedsize_mlp.svg" style="width: 400px;" />
 ]
 
-Fixed context size:
+Use a fixed context size. What to do about combining information from
+each word:
 
 - Average embeddings: (same as Continous BoW) no sequence information
 - Concatenate embeddings: introduces many parameters
@@ -267,8 +278,10 @@ Accumulate knowledge from a sequence into a fixed size representation.
 <img src="images/unrolled_rnn_words.svg" style="width: 450px;" />
 ]
 
-input $(w\_0, w\_1, ..., w\_t)$ .small[ sequence of (encoded) words ] <br/>
-output $(w\_1, w\_2, ..., w\_{t+1})$ .small[shifted sequence of (encoded) words ]
+Train with:
+
+* input $(w\_0, w\_1, ..., w\_t)$ .small[ sequence of (encoded) words]
+* output $(w\_1, w\_2, ..., w\_{t+1})$ .small[shifted sequence of (encoded) words]
 
 ---
 
@@ -288,11 +301,11 @@ Keep transforming your data until it is linearly separable.
   layer to do multi-class classification from scratch.
 * You will leave knowing how to use spacy and gensim for NLP tasks
   in a production setting.
-* You will know what reucrrent neural networks are and how to apply them to
+* You will know what recurrent neural networks are and how to apply them to
   short sequences of text.
 * You will learn what word embeddings are and how to use them to build powerful
   models for text classification.
-* You will know how a seq2seq model works and able to train one to
+* You will know how a seq2seq model works and will be able to train one to
   translate short documents.
 * You will have ideas on computing document similarity.
 --
@@ -336,14 +349,15 @@ class: middle, center
 
 # Day 1
 
-* 9.00 - 9.30 arrival, introductions, plan for the day(s)
-* 9.30 - 10.30 spacy 101. Introduce the jargon of NLP
+* 9.00 - 10.00 arrival, introductions, plan for the day(s)
+* 10.00 - 10.30 spacy 101. Introduce the jargon of NLP
+* coffee ☕️
 * 10.40 - 12.10 linear regression, loss, gradient descent
 * lunch
 * 13.10 - 14.40 logistic regression
 * 14.40 - 15.40 under- and over-fitting, measuring performance
-* coffee
-* 16.00 - 17.30 A simple NN in keras
+* coffee ☕️
+* 16.00 - 17.00 A simple NN in keras
 
 ---
 
@@ -568,15 +582,12 @@ linear algebra attempt it, but keep an eye on the time.
 
 ---
 
-# Over- and under-fitting
+# Measuring your performance
 
-measuring performance
-* https://developers.google.com/machine-learning/crash-course/generalization/peril-of-overfitting
-* 15m generalisation
-* 25m training and test
-* 40m validation
-* https://www.scipy-lectures.org/packages/scikit-learn/index.html#parameter-selection-validation-and-testing
-* http://scikit-learn.org/stable/auto_examples/model_selection/plot_underfitting_overfitting.html#sphx-glr-auto-examples-model-selection-plot-underfitting-overfitting-py
+* keep yourself honest
+* over- and under-fitting, the sweetspot
+*
+
 
 ---
 
@@ -682,6 +693,19 @@ What is the accuracy of this classifier?
 
 .center.width-90[![](images/overfitting_underfitting_cartoon_full.png)]
 
+Only way to find the sweet spot is to try many different combinations of
+hyper-parameters. There usually isn't a nice linear mapping from hyper-parameters
+to "model complexity".
+
+---
+
+# Notebooks
+
+* `31-underfitting-overfitting-solved.ipynb` illustrates over- and underfitting
+  for a simple regression problem
+* `32-test-train-validation-solved.ipynb` illustrates why you need to split your
+  data into three sets
+
 ---
 
 class: middle,center
@@ -741,6 +765,15 @@ $$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
 
 ---
 
+# Notebooks
+
+* `40-keras-fashion-solved.ipynb` build a small neural network to
+  classify images of fashion items
+* (`39-numpy-multi-layer-network-solved.ipynb` implements a one hidden
+    layer neural network using just numpy. Maybe come back to this
+    at some later point.)
+---
+
 # Tomorrow: recurrent neural networks
 
 .width-80.center[![](images/nn-as-dag.png)]
@@ -762,6 +795,8 @@ $$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
 class: middle, center
 
 # Today: Words, words, words
+
+Day 2
 
 ---
 
