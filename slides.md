@@ -371,7 +371,7 @@ Industrial strength NLP.
 
 * Fast, reliable, modern.
 * Tokeniser, parser, part-of-speech, named entity recogniser.
-* Concolutional neural networks under the hood.
+* Convolutional neural networks under the hood.
 * Supports 20+ languages.
 * Use it from Python, most heavy lifting is in Cython.
 * MIT license
@@ -453,7 +453,7 @@ Outro at 11.55h, after that lunch.
 * loss functions measure how well we are doing, lower is better
 * use gradient of loss function to update parameters of the model
 * need to compute analytic gradients
-* gradient descent: $w \leftarrow w + \alpha \frac{\partial L}{\partial w}$
+* gradient descent: $w \leftarrow w - \alpha \frac{\partial L}{\partial w}$
 * learning rate $\alpha$ is a hyper-parameter we need to tune by hand
 * stochastic gradient descent uses only a few samples to compute gradient at
   each step
@@ -585,8 +585,17 @@ linear algebra attempt it, but keep an eye on the time.
 # Measuring your performance
 
 * keep yourself honest
-* over- and under-fitting, the sweetspot
-*
+* over- and under-fitting, the sweet spot
+* there are many different metrics for measuring performance:
+  - accuracy
+  - ROC AUC
+  - recall and precision
+  - basically: http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics
+  - often people start with accuracy but often it is inappropriate
+* cross-validation helps get better estimates of your performance as well as
+  an uncertainty.
+  - It isn't some kind of magic spell that protects you from evil.
+  - just because you are doing CV doesn't mean you are doing it right.
 
 
 ---
@@ -843,7 +852,7 @@ $$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
 
 ---
 
-# Finding the sweetspot
+# Finding the sweet spot
 
 .center.width-90[![](images/overfitting_underfitting_cartoon_full.png)]
 
