@@ -573,6 +573,13 @@ linear algebra attempt it, but keep an eye on the time.
 
 ---
 
+# Notebook
+
+* `20-logistic-regression.ipynb` turn your linear regression into
+  a hand writte ndigit classifier
+
+---
+
 # Logistic regression - outro
 
 * Mostly things are as they were for linear regression but a bit more
@@ -722,6 +729,35 @@ class: middle,center
 
 ---
 
+class: middle, center
+
+# Today: Words, words, words
+
+Day 2
+
+---
+
+# Day 2
+
+* 9.00 - 9.30 Plan for the day
+* 9.30 - 10.30 Logistic regression
+* 10.30 - 11.30 Keras NN
+* 11.30 - 13.30 TfIdf as basic word vectors (with 1h lunch)
+* 13.30 - 15.00 word2vec in depth
+* coffee
+* 15.10 - 16.30 Linear models + pretrained embeddings
+* 16.30 - 17.30 ETH ticket database, projects
+
+---
+
+
+# Notebook
+
+* `20-logistic-regression.ipynb` turn your linear regression into
+  a hand writte ndigit classifier
+
+---
+
 # Neural networks in production
 
 .width-90.center[![](images/keras.png)]
@@ -762,13 +798,8 @@ Using "tensor" notation.
 
 $$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
 
-.footnote[From https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/]
-
----
-
-# In General: A Directed Acyclical Graph
-
-.width-80.center[![](images/nn-as-dag.png)]
+* $ w_1 \cdot x + b_1 $ implemented in `Dense` layer in keras.
+* $ \sigma(x) $ implemented in the `Activation` layer in keras.
 
 .footnote[From https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/]
 
@@ -776,51 +807,14 @@ $$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
 
 # Notebooks
 
-* `40-keras-fashion-solved.ipynb` build a small neural network to
+* `40-keras-fashion.ipynb` build a small neural network to
   classify images of fashion items
 * (`39-numpy-multi-layer-network-solved.ipynb` implements a one hidden
     layer neural network using just numpy. Maybe come back to this
     at some later point.)
----
-
-# Tomorrow: recurrent neural networks
-
-.width-80.center[![](images/nn-as-dag.png)]
-
-.footnote[From https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/]
 
 ---
 
-# Recap of the day
-
-* Learnt fundamentals of machine-learning.
-* How to measure the performance of our pipeline.
-* Constructed building blocks of neural networks from scratch.
-* Implemented small neural network using keras.
-* The secret sauce of neural networks is that they are feature transformers!
-
----
-
-class: middle, center
-
-# Today: Words, words, words
-
-Day 2
-
----
-
-# Day 2
-
-* 9.00 - 9.30 Plan for the day
-* 9.30 - 10.30 TfIdf as basic word vectors
-* 10.40 - 12.10 word2vec in depth
-* lunch
-* 13.10 - 14.40 Linear models + pretrained embeddings
-* 14.40 - 15.40 Dealing with sequences: LSTM, GRU and Conv1D
-* coffee
-* 16.00 - 17.30 ETH ticket database
-
----
 
 # Neural networks are just maths
 
@@ -831,30 +825,6 @@ $$h_2 = \tanh(\mathbf{W_2} h_1 + \mathbf{b_2})$$
 $$y = \mathsf{softmax}(\mathbf{W_o} h_2 + \mathbf{b_o})$$
 
 Final layer is just logistic regression.
-
----
-
-# Simple Neural Network
-
-.width-100.center[![](images/two-layer.png)]
-
-$$ f(x) = \sigma(w_2 \cdot \sigma(w_1 \cdot x + b_1) + b_2) $$
-
-.footnote[From https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/]
-
----
-
-# In General: A Directed Acyclical Graph
-
-.width-80.center[![](images/nn-as-dag.png)]
-
-.footnote[From https://documents.epfl.ch/users/f/fl/fleuret/www/dlc/]
-
----
-
-# Finding the sweet spot
-
-.center.width-90[![](images/overfitting_underfitting_cartoon_full.png)]
 
 ---
 
@@ -931,7 +901,7 @@ Limitations of bag of words:
 - Semantics of words not captured
   - distance between `movie` and `film` and `dog` is the same
 - Synonymous words not represented
-- Very distributed representation of documents
+- Very sparse representation of documents
 
 --
 
@@ -1044,6 +1014,13 @@ appropriate pre-trained vectors. You can get them from places like:
 
 ---
 
+# Notebooks
+
+* `day2/20-using-word-vectors.ipynb`
+* `day2/21-training-word-vectors.ipynb`
+
+---
+
 # Word vectors outro
 
 You can find a fairly low dimensional (compared to BoW) vector space into which
@@ -1059,11 +1036,6 @@ You rarely need to train these yourself.
 
 ---
 
-class: middle,center
-# Lunch 🍲😋
-
----
-
 # Using word vectors
 
 Next we will look at how you can construct good models with little computing
@@ -1071,6 +1043,8 @@ power.
 
 We will train our own embedding vectors, use pre-trained ones, and
 see that all this also works in German.
+
+Notebook: `30-word-vectors-and-linear-models.ipynb`
 
 ---
 
@@ -1092,6 +1066,104 @@ Artificially shrink your dataset:
 * what kind of reviews are misclassified?
 * if you swap out common words for their synonym what happens to performance?
   - what happens to the BoW baseline model's performance?
+
+---
+
+# Mini projects
+
+There is a dataset of tickets filed with the helpdesk that you could work on.
+
+There are also many, many other datasets out there.
+
+Step one is to load the data!
+* maybe use this session to plan a bit for tomorrow
+
+Some ideas for possible projects:
+
+* spell checking via word vectors
+    * needs sub-word features (char-grams)
+    * learn a custom embedding with misspelt words
+      thrown in?
+
+* language determination
+    * needs sub-word features, char-grams
+    * sentences in many languages: https://tatoeba.org/eng/downloads
+
+---
+
+# Mini projects
+
+Some ideas for possible projects (cont):
+
+* How long did it take to close the issue? Maybe just long or short categories
+
+* Can you predict who will answer the ticket?
+
+* How would you get started detecting duplicates/similar entries?
+    * first detect language
+    * then try `nlp.similarity()`` as baseline?
+    * how many unique words are there?
+    * Typical text length of a ticket?
+    * how to bootstrap the process? Simple way to generate labelled data?
+    * if you are ambitious check out https://github.com/facebookresearch/StarSpace#articlespace-learning-sentence-and-article-embeddings (needs a compiler, windows support?)
+
+---
+
+# Mini projects
+
+* detect sarcasm in comments
+  - big dataset of reddit comments on kaggle https://www.kaggle.com/danofer/sarcasm
+  - similar to the movie review task
+
+* toxic comments in discussion threads
+  - big dataset on kaggle with comments from discussion threads on
+    wikipedia
+  - how well does a model learnt here work on other datasets?
+  - https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge
+
+---
+
+# Mini projects
+
+* a bit more realistic instead of setup teaching exercises
+* needs you to figure out what you want to do
+* explore the data a little to get a feeling for it
+  - class imbalance?
+  - lots of typos?
+  - what language(s)?
+* and start from a blank slate.
+* Things I'd think about:
+  - what is the simplest possible baseline?
+  - can I get the baseline working ASAP?
+  - what is the most similar problem I've already solved?
+  - how would I solve this problem if I was Google?
+
+---
+
+class: middle,center
+
+# Day 3: recurrent networks
+
+---
+
+# Day 3
+
+* 9.00 - 9.30 Plan for the day
+* 9.30 - 11.00 Dealing with sequences: LSTM, GRU and Conv1D
+* 11.00 - 12.00 Generating text
+* lunch
+* 13.00 - 14.30 seq2seq - translating numbers
+* 14.30 - 15.00 fastText and starspace
+* 15.00 - ... projects
+
+---
+
+# How to deal with sequential nature of text?
+
+We average (or max, or mean, or ...) the individual word vectors.
+
+You can also try concatenating the mean and the max vector and see
+if this increases the performance.
 
 ---
 
@@ -1183,5 +1255,13 @@ Will use the pictures from the following article to explain things,
 you should find a moment to read the article as it is great.
 
 http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+
+---
+
+# Notebooks
+
+* `40-why-lstm.ipynb` experiment with LSTM or GRU compared to a simple RNN cell
+* `41-lstm-gru-on-imdb-solved.ipynb` using LSTMs and a convolutional neural
+  network on the movie reviews.
 
 ---
