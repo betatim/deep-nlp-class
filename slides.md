@@ -754,7 +754,7 @@ Day 2
 # Notebook
 
 * `20-logistic-regression.ipynb` turn your linear regression into
-  a hand writte ndigit classifier
+  a hand written digit classifier
 
 ---
 
@@ -1149,12 +1149,11 @@ class: middle,center
 # Day 3
 
 * 9.00 - 9.30 Plan for the day
-* 9.30 - 11.00 Dealing with sequences: LSTM, GRU and Conv1D
+* 9.30 - 11.00 Dealing with sequences: RNN, LSTM and GRU
 * 11.00 - 12.00 Generating text
 * lunch
-* 13.00 - 14.30 seq2seq - translating numbers
-* 14.30 - 15.00 fastText and starspace
-* 15.00 - ... projects
+* 13.00 - 14.30 seq2seq - translating German to Numeric
+* 14.30 - late mini projects
 
 ---
 
@@ -1173,7 +1172,7 @@ Finally, a tool that can deal with sequences!
 
 Sequence classification:
 * sentiment analysis,
-* activity recognition (GitBit),
+* activity recognition (FitBit),
 * DNA sequence classification
 
 Sequence synthesis:
@@ -1258,10 +1257,295 @@ http://colah.github.io/posts/2015-08-Understanding-LSTMs/
 
 ---
 
+# Short term memory only
+
+.center.width-80[![](images/RNN-shorttermdepdencies.png)]
+
+For some things like predicting the next word in simple sentences
+you only have to remember recent context (words). Simple statement
+about the world.
+
+---
+
+# Short term memory only
+
+.center.width-80[![](images/RNN-longtermdependencies.png)]
+
+For some things you need to have a long term memory. For example a politician
+answering a question.
+
+The problem is continually having to combine the "memory" of the RNN with
+new information. It can't opt to ignore new information for a while.
+
+---
+
+# LSTMs - Long short term memory
+
+This type of RNN cell was designed in 1997 by Hochreiter and Schmidhuber. Yet
+another old idea. Its default position is to "ignore" new information.
+
+---
+
+# Short term memory only
+
+.center.width-80[![](images/LSTM3-SimpleRNN.png)]
+
+The insides of a normal/vanilla RNN cell. You have to feed the hidden state
+through a $\tanh$ every time and combine it with the current input.
+
+---
+
+# Make a memory highway
+
+.center.width-80[![](images/LSTM3-chain.png)]
+
+The insides of a LSTM cell.
+
+If you are trying to output the colour of the object in a sentence like: The
+self-driving Tesla was very big and a shiny red colour.
+
+You need to spot the object, remember it, then ignore words until you see a
+colour. Then output the colour and the object. Then forget the object.
+
+---
+
+# In practice
+
+This means that a LSTM will make faster progress on solving a sequence
+related task if you need to remember things for a long time.
+
+There is a toy task for this in the next notebook. It should show that
+a LSTM will learn in less epochs than a simple RNN.
+
+---
+
 # Notebooks
 
 * `40-why-lstm.ipynb` experiment with LSTM or GRU compared to a simple RNN cell
-* `41-lstm-gru-on-imdb-solved.ipynb` using LSTMs and a convolutional neural
-  network on the movie reviews.
+* (`41-lstm-gru-on-imdb-solved.ipynb` using LSTMs and a convolutional neural
+  network on the movie reviews.)
+
+---
+
+# Encoder-Decoder
+
+.center[
+          <img src="images/encoder_decoder_1.svg" style="width: 680px;" />
+]
+
+.footnote.small[
+Cho, Kyunghyun, et al. "Learning phrase representations using RNN encoder-decoder for statistical machine translation." 2014
+]
+---
+# Encoder-Decoder
+
+.center[
+          <img src="images/encoder_decoder_2.svg" style="width: 680px;" />
+]
+
+.footnote.small[
+Cho, Kyunghyun, et al. "Learning phrase representations using RNN encoder-decoder for statistical machine translation." 2014
+]
+---
+# Encoder-Decoder
+
+.center[
+          <img src="images/encoder_decoder.svg" style="width: 680px;" />
+]
+
+.footnote.small[
+Cho, Kyunghyun, et al. "Learning phrase representations using RNN encoder-decoder for statistical machine translation." 2014
+]
+---
+# Encoder-Decoder
+
+.center[
+          <img src="images/encoder_decoder_forcing.svg" style="width: 680px;" />
+]
+
+"teacher forcing" - feed correct output in as input during training
+
+.footnote.small[
+Cho, Kyunghyun, et al. "Learning phrase representations using RNN encoder-decoder for statistical machine translation." 2014
+]
+
+---
+# Sequence to Sequence
+
+.center[
+          <img src="images/basic_seq2seq.png" style="width: 760px;" />
+]
+
+.footnote.small[
+Sutskever, Ilya, Oriol Vinyals, and Quoc V. Le. "Sequence to sequence learning with neural networks." NIPS 2014
+]
+
+- Reverse input sequence for translation.
+- Special symbols to signal start of decoding and end of sentence.
+- Translate German to Numeric "zwei und zwanzig" to "22"
+  - different vocabulary sizes
+  - use words for German
+  - use digits for Numeric
+  - sequences have different length
+
+---
+
+# Notebooks
+
+* `30-numbers-to-text.ipynb`
+
+---
+
+# Textgenrnn
+
+Generate text one character at a time. A fun library that comes with a pre-trained
+language model.
+
+.center.width-60[![](https://raw.githubusercontent.com/minimaxir/textgenrnn/master/docs/textgenrnn_console.gif)]
+
+https://github.com/minimaxir/textgenrnn
+
+---
+
+# The textgenrnn model
+
+.center.width-70[![](https://raw.githubusercontent.com/minimaxir/textgenrnn/master/docs/default_model.png)]
+
+---
+
+# The textgenrnn model in code
+
+```
+input = Input(shape=(cfg['max_length'],), name='input')
+embedded = Embedding(num_classes, cfg['dim_embeddings'],
+                     input_length=cfg['max_length'],
+                     name='embedding')(input)
+
+if dropout > 0.0:
+    embedded = SpatialDropout1D(
+        dropout,
+         name='dropout')(embedded)
+
+rnn_layer_list = []
+for i in range(cfg['rnn_layers']):
+    prev_layer = embedded if i is 0 else rnn_layer_list[-1]
+    rnn_layer_list.append(new_rnn(cfg, i+1)(prev_layer))
+
+seq_concat = concatenate([embedded] + rnn_layer_list)
+attention = AttentionWeightedAverage(name='attention')(seq_concat)
+output = Dense(num_classes, name='output',
+               activation='softmax')(attention)
+```
+
+https://github.com/minimaxir/textgenrnn/blob/42e79fdac5feeb0244cc028a9aa9d1775b1e3da0/textgenrnn/model.py#L9-L33
+
+---
+
+# Textgenrnn library
+
+Very small library with good code quality.
+
+Install it with:
+```
+pip install textgenrnn
+```
+
+comes with a pretrained network so you can try it out straight away.
+
+Orientate yourself a bit in the code base to get an idea of how people structure these
+kindsof things. Can you find where the model is defined? How does the next
+character get generated?
+
+https://github.com/minimaxir/textgenrnn
+
+Could use this as a baseline for auto generating source code.
+
+---
+
+# What did you learn?
+
+* How logistic regression, the workhorse of NNs, works.
+* What the "learning" in machine-learning means: gradient descent
+* How to use word vectors for fun and profit
+* How recurrent neural networks work and how to use them to translate
+  sequences
+* State of the art libraries like spacy and keras
+* Lots of exercise reading and writing Python
+
+---
+
+class: middle, center
+
+# Build a (small) real world project
+
+---
+
+# Mini projects
+
+Some ideas for possible projects (cont):
+
+* How long did it take to close the issue? Maybe just long or short categories
+
+* Can you predict who will answer the ticket?
+
+* How would you get started detecting duplicates/similar entries?
+    * first detect language
+    * then try `nlp.similarity()`` as baseline?
+    * how many unique words are there?
+    * Typical text length of a ticket?
+    * how to bootstrap the process? Simple way to generate labelled data?
+    * if you are ambitious check out https://github.com/facebookresearch/StarSpace#articlespace-learning-sentence-and-article-embeddings (needs a compiler, windows support?)
+
+---
+
+# Mini projects
+
+* spelling correction via word vectors
+  - find a corpus of typos and not typos
+  - can you train a small RNN model to classify words as typo or not typo?
+  - install fastText and compare word vectors for typos and not typos
+
+* Automatic coder
+  - `git clone` all the Python projects to get source code
+  - https://docs.python.org/3/library/tokenize.html to use tokens instead of
+    characters?
+  - train textgenrnn (or other library) with source code
+
+---
+
+# Mini projects
+
+* detect sarcasm in comments
+  - big dataset of reddit comments on kaggle https://www.kaggle.com/danofer/sarcasm
+  - similar to the movie review task
+
+* toxic comments in discussion threads
+  - big dataset on kaggle with comments from discussion threads on
+    wikipedia
+  - how well does a model learnt here work on other datasets?
+  - https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge
+
+---
+
+# Mini projects
+
+* a bit more realistic instead of setup teaching exercises
+* needs you to figure out what you want to do
+* explore the data a little to get a feeling for it
+  - class imbalance?
+  - lots of typos?
+  - what language(s)?
+* and start from a blank slate.
+* Things I'd think about:
+  - what is the simplest possible baseline?
+  - can I get the baseline working ASAP?
+  - what is the most similar problem I've already solved?
+  - how would I solve this problem if I was Google?
+
+---
+
+class: middle, bottom
+
+.center[Fin.]
 
 ---
